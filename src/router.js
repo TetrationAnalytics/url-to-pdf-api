@@ -39,7 +39,7 @@ function createRouter() {
     body: renderBodySchema,
     query: sharedQuerySchema,
     options: {
-      allowUnknownBody: false,
+      allowUnknownBody: config.ALLOW_UNKNOWN_BODY === 'true',
       allowUnknownQuery: false,
 
       // Without this option, text body causes an error

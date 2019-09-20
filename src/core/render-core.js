@@ -2,6 +2,8 @@ const puppeteer = require('puppeteer');
 const _ = require('lodash');
 const config = require('../config');
 const logger = require('../util/logger')(__filename);
+const {getAuth} = require('../util/auth');
+const {readFromFile, writeToFile} = require('../util/persist');
 
 async function render(_opts = {}) {
   const opts = _.merge({
@@ -27,6 +29,7 @@ async function render(_opts = {}) {
       fullPage: true,
     },
     failEarly: false,
+    needAuth: _.isString(_opts.username) && _opts.username !== '',
   }, _opts);
 
   if (_.get(_opts, 'pdf.width') && _.get(_opts, 'pdf.height')) {
@@ -38,12 +41,14 @@ async function render(_opts = {}) {
   logOpts(opts);
 
   const browser = await puppeteer.launch({
-    headless: !config.DEBUG_MODE,
-    ignoreHTTPSErrors: opts.ignoreHttpsErrors,
+    headless: opts.headless || !config.DEBUG_MODE,
+    ignoreHTTPSErrors: opts.ignoreHttpsErrors || config.IGNORE_HTTPS_ERRORS,
     args: ['--disable-gpu', '--no-sandbox', '--disable-setuid-sandbox'],
     sloMo: config.DEBUG_MODE ? 250 : undefined,
   });
   const page = await browser.newPage();
+
+  if (opts.needAuth) await getAuth(page, opts.username, opts.passwd);
 
   page.on('console', (...args) => logger.info('PAGE LOG:', ...args));
 
@@ -150,6 +155,10 @@ async function render(_opts = {}) {
 
       data = await page.screenshot(screenshotOpts);
     }
+
+    // Write data to file
+    console.log('[renderCore] write to file, jobId = ', opts.jobId);
+    await writeToFile(`/home/pdf/test_${opts.jobId}.pdf`, data);
   } catch (err) {
     logger.error(`Error when rendering page: ${err}`);
     logger.error(err.stack);
