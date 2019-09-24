@@ -1,16 +1,7 @@
 const WebHDFS = require('webhdfs');
 const config = require('../config');
-const {Duplex} = require('stream');
 const logger = require('./logger')(__filename);
-
-const bufferToStream = data => {
-  const stream = new Duplex();
-
-  stream.push(data);
-  stream.push(null);
-
-  return stream;
-};
+const BufferStreamReader = require('buffer-stream-reader');
 
 const hdfsClient = WebHDFS.createClient({
   user: config.HDFS_USER,
@@ -40,7 +31,7 @@ const readFromFile = filePath =>
 // Writer
 const writeToFile = (filePath, data) =>
   new Promise((resolve, reject) => {
-    const localFileStream = bufferToStream(data);
+    const localFileStream = new BufferStreamReader(data);
     const remoteWriterStream = hdfsClient.createWriteStream(filePath);
 
     localFileStream.pipe(remoteWriterStream);
@@ -53,7 +44,7 @@ const writeToFile = (filePath, data) =>
 
     remoteWriterStream.on('finish', () => {
       // Upload is done
-      logger.info(`write success.`);
+      logger.info('write success.');
       resolve(filePath);
     });
   });

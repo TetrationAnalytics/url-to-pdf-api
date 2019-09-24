@@ -157,8 +157,8 @@ async function render(_opts = {}) {
     }
 
     // Write data to file
-    console.log('[renderCore] write to file, jobId = ', opts.jobId);
-    await writeToFile(`/home/pdf/test_${opts.jobId}.pdf`, data);
+    logger.info('[renderCore] write to file, jobId = ', opts.jobId);
+    await writeToFile(`/home/pdf/${opts.jobId}.pdf`, data);
   } catch (err) {
     logger.error(`Error when rendering page: ${err}`);
     logger.error(err.stack);
