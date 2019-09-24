@@ -2,8 +2,8 @@ const puppeteer = require('puppeteer');
 const _ = require('lodash');
 const config = require('../config');
 const logger = require('../util/logger')(__filename);
-const {getAuth} = require('../util/auth');
-const {readFromFile, writeToFile} = require('../util/persist');
+const { getAuth } = require('../util/auth');
+const { writeToFile } = require('../util/persist');
 
 async function render(_opts = {}) {
   const opts = _.merge({
