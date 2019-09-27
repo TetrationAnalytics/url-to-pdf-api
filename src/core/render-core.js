@@ -4,6 +4,8 @@ const config = require('../config');
 const logger = require('../util/logger')(__filename);
 const { getAuth } = require('../util/auth');
 const { writeToFile } = require('../util/persist');
+const header = require('../template/header.tpl');
+const footer = require('../template/footer.tpl');
 
 async function render(_opts = {}) {
   const opts = _.merge({
@@ -23,6 +25,13 @@ async function render(_opts = {}) {
     pdf: {
       format: 'A4',
       printBackground: true,
+      displayHeaderFooter: true,
+      headerTemplate: header,
+      footerTemplate: footer,
+      margin: {
+        top: '60px',
+        bottom: '60px',
+      },
     },
     screenshot: {
       type: 'png',
