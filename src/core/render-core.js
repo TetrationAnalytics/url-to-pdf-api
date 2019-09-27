@@ -110,6 +110,7 @@ async function render(_opts = {}) {
     } else {
       logger.info(`Goto url ${opts.url} ..`);
       await page.goto(opts.url, opts.goto);
+      await page.emulateMedia('print');
     }
 
     if (_.isNumber(opts.waitFor) || _.isString(opts.waitFor)) {
