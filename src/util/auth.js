@@ -1,7 +1,7 @@
 const config = require('../config');
 const logger = require('./logger')(__filename);
 
-const getBaseUrl = () => `${config.PROTOCOL}://${config.SUBDOMAIN}.${config.HOSTNAME}`;
+const getBaseUrl = () => `${config.PROTOCOL}://${config.BASEHOST}`;
 
 const getAuth = async (page, username, passwd) => {
   const baseUrl = getBaseUrl();
