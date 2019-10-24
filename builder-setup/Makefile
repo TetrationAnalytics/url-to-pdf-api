@@ -1,6 +1,7 @@
 all: build
 
 HOME_DIR=/home/h4ci1
+SHA=$(shell git rev-parse HEAD)
 
 .PHONY: prepare
 .ONESHELL:
