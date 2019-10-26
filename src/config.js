@@ -22,7 +22,7 @@ const config = {
   HDFS_USER: process.env.PDF_HDFS_USER,
   HDFS_HOST: process.env.PDF_HDFS_HOST,
   HDFS_PORT: process.env.PDF_HDFS_PORT,
-  HDFS_PATH: process.env.PDF_HDFS_PATH,
+  WEBHDFS_URL: process.env.PDF_WEBHDFS_URL,
 };
 
 if (process.env.PDF_API_TOKENS) {
