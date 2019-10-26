@@ -6,18 +6,18 @@ BUILD_BRANCH ?= master
 DOCKER_REPOSITORY ?= artifacts.tet.wtf:6557
 DOCKER_USERNAME ?= h4re1
 DOCKER_PASSWORD := $$(cat ~/.jfrog/jfrog-cli.conf | jq -r '.artifactory | .[] | select(.serverId == "artifactory-sjc-b4") | .apiKey')
+CENTOS6_DOCKER_IMAGE = package-centos6:latest
 
 .PHONY: build
 .ONESHELL:
 build:
 	@echo "$(DOCKER_PASSWORD)" | sudo docker login $(DOCKER_REPOSITORY) -u="$(DOCKER_USERNAME)" --password-stdin
-	@sudo docker pull $(DOCKER_REPOSITORY)/package-centos6
-	$(eval ID := $(shell sudo docker create -i -u $(BUILD_USER) -w $(BUILD_HOME) $(DOCKER_REPOSITORY)/package-centos6 /bin/bash -l -c "export BUILD_BRANCH=$(BUILD_BRANCH) && cat /etc/centos-release && make build && ls $(BUILD_HOME)/pdf_printer_rpms"))
-	@echo Container ID is $(ID)
-	sudo docker cp Makefile $(ID):$(BUILD_HOME)/Makefile
-	sudo docker cp ../builder-setup $(ID):$(BUILD_HOME)/
-	sudo docker start -ai $(ID)
-	sudo docker stop $(ID)
-	sudo docker cp $(ID):$(BUILD_HOME)/pdf_printer_rpms/ ./
-	sudo docker rm $(ID)
-	sudo chmod -R 0777 pdf_printer_rpms
+	@sudo docker pull $(DOCKER_REPOSITORY)/$(CENTOS6_DOCKER_IMAGE)
+	id=$$(docker create -i -u $(BUILD_USER) -w $(BUILD_HOME) $(DOCKER_REPOSITORY)/$(CENTOS6_DOCKER_IMAGE) /bin/bash -l -c "export BUILD_BRANCH=$(BUILD_BRANCH) && export VERSION=$(VERSION) && ls -a && cd pdf-printer-build/builder-setup && make build")
+	@echo Container ID is $${id}
+	sudo docker cp ../../pdf-printer-build $${id}:/$(BUILD_HOME)/
+	sudo docker start -ai $${id}
+	sudo docker stop $${id}
+	sudo docker cp $${id}:$(BUILD_HOME)/pdf-printer-build/rpms/ ./
+	sudo docker rm $${id}
+	sudo chmod -R 0777 ./rpms

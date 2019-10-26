@@ -1,5 +1,5 @@
 targets:
-  centos-6.10:
+  ubuntu-14.04:
 
 user: tetter
 group: tetter
