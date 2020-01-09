@@ -2,44 +2,45 @@ const puppeteer = require('puppeteer');
 const _ = require('lodash');
 const config = require('../config');
 const logger = require('../util/logger')(__filename);
-const { getAuth } = require('../util/auth');
 const { writeToFile } = require('../util/persist');
 const header = require('../template/header.tpl');
 const footer = require('../template/footer.tpl');
 
 async function render(_opts = {}) {
-  const opts = _.merge({
-    cookies: [],
-    scrollPage: false,
-    emulateScreenMedia: true,
-    ignoreHttpsErrors: false,
-    html: null,
-    viewport: {
-      width: 1600,
-      height: 1200,
-    },
-    goto: {
-      waitUntil: 'networkidle2',
-    },
-    output: 'pdf',
-    pdf: {
-      format: 'A4',
-      printBackground: true,
-      displayHeaderFooter: true,
-      headerTemplate: header,
-      footerTemplate: footer,
-      margin: {
-        top: '60px',
-        bottom: '60px',
+  const opts = _.merge(
+    {
+      cookies: [],
+      scrollPage: false,
+      emulateScreenMedia: true,
+      ignoreHttpsErrors: false,
+      html: null,
+      viewport: {
+        width: 1600,
+        height: 1200
       },
+      goto: {
+        waitUntil: 'networkidle2'
+      },
+      output: 'pdf',
+      pdf: {
+        format: 'A4',
+        printBackground: true,
+        displayHeaderFooter: true,
+        headerTemplate: header,
+        footerTemplate: footer,
+        margin: {
+          top: '60px',
+          bottom: '60px'
+        }
+      },
+      screenshot: {
+        type: 'png',
+        fullPage: true
+      },
+      failEarly: false
     },
-    screenshot: {
-      type: 'png',
-      fullPage: true,
-    },
-    failEarly: false,
-    needAuth: _.isString(_opts.username) && _opts.username !== '',
-  }, _opts);
+    _opts
+  );
 
   if (_.get(_opts, 'pdf.width') && _.get(_opts, 'pdf.height')) {
     // pdf.format always overrides width and height, so we must delete it
@@ -53,30 +54,36 @@ async function render(_opts = {}) {
     headless: opts.headless || !config.DEBUG_MODE,
     ignoreHTTPSErrors: opts.ignoreHttpsErrors || config.IGNORE_HTTPS_ERRORS,
     args: ['--disable-gpu', '--no-sandbox', '--disable-setuid-sandbox'],
-    sloMo: config.DEBUG_MODE ? 250 : undefined,
+    sloMo: config.DEBUG_MODE ? 250 : undefined
   });
   const page = await browser.newPage();
 
-  if (opts.needAuth) await getAuth(page, opts.username, opts.passwd);
+  if (opts.session) {
+    await page.setCookie({
+      name: '_tetration_session',
+      value: opts.session,
+      domain: 'localhost',
+      path: '/'
+    });
+  }
 
   page.on('console', (...args) => logger.info('PAGE LOG:', ...args));
 
-  page.on('error', (err) => {
+  page.on('error', err => {
     logger.error(`Error event emitted: ${err}`);
     logger.error(err.stack);
     browser.close();
   });
 
-
   this.failedResponses = [];
-  page.on('requestfailed', (request) => {
+  page.on('requestfailed', request => {
     this.failedResponses.push(request);
     if (request.url === opts.url) {
       this.mainUrlResponse = request;
     }
   });
 
-  page.on('response', (response) => {
+  page.on('response', response => {
     if (response.status >= 400) {
       this.failedResponses.push(response);
     }
@@ -125,12 +132,14 @@ async function render(_opts = {}) {
 
     if (this.failedResponses.length) {
       logger.warn(`Number of failed requests: ${this.failedResponses.length}`);
-      this.failedResponses.forEach((response) => {
+      this.failedResponses.forEach(response => {
         logger.warn(`${response.status} ${response.url}`);
       });
 
       if (opts.failEarly === 'all') {
-        const err = new Error(`${this.failedResponses.length} requests have failed. See server log for more details.`);
+        const err = new Error(
+          `${this.failedResponses.length} requests have failed. See server log for more details.`
+        );
         err.status = 412;
         throw err;
       }
@@ -158,7 +167,10 @@ async function render(_opts = {}) {
       // This is done because puppeteer throws an error if fullPage and clip is used at the same
       // time even though clip is just empty object {}
       const screenshotOpts = _.cloneDeep(_.omit(opts.screenshot, ['clip']));
-      const clipContainsSomething = _.some(opts.screenshot.clip, val => !_.isUndefined(val));
+      const clipContainsSomething = _.some(
+        opts.screenshot.clip,
+        val => !_.isUndefined(val)
+      );
       if (clipContainsSomething) {
         screenshotOpts.clip = opts.screenshot.clip;
       }
@@ -222,6 +234,5 @@ function logOpts(opts) {
 }
 
 module.exports = {
-  render,
+  render
 };
-
