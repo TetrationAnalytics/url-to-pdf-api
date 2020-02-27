@@ -3,8 +3,9 @@ pipeline {
     label 'docker'
   }
   parameters {
-    string(name: 'BUILD_BRANCH', defaultValue: 'master', description: 'Branch to build')
-    string(name: 'VERSION', defaultValue: '1.0.0', description: 'version to name the rpm')
+    string(name: 'BUILD_BRANCH', defaultValue: 'master', description: 'Build Branch')
+    string(name: 'VERSION', defaultValue: '1.0.0', description: 'RPM Version')
+    string(name: 'TAG', defaultValue: 'latest', description: 'Docker Image Tag')
   }
   options {
     timestamps()
@@ -37,10 +38,17 @@ pipeline {
         ])
       }
     }
-    stage('Build') {
+    stage('Build RPM') {
       steps {
         sh """
-          cd builder-setup && make BUILD_BRANCH=${params.BUILD_BRANCH} VERSION=${params.VERSION} -f Makefile.docker build && ls -a rpms/
+          cd builder-setup && make BUILD_BRANCH=${params.BUILD_BRANCH} VERSION=${params.VERSION} -f Makefile.docker build && ls -a docker/
+        """
+      }
+    }
+    stage('Build Docker') {
+      steps {
+        sh """
+          cd docker && ls && docker build --build-arg RPM_VERSION=${params.VERSION} -t ${params.TAG} . && docker image ls 
         """
       }
     }
