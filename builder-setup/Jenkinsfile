@@ -41,7 +41,7 @@ pipeline {
     stage('Build RPM and Docker Image') {
       steps {
         sh """
-          cd builder-setup && make BUILD_BRANCH=${params.BUILD_BRANCH} VERSION=${params.VERSION} -f Makefile.docker build && ls -a docker/ && cd docker/ && docker build --build-arg RPM_VERSION=${params.VERSION} -t ${params.TAG} . && docker image ls
+          cd builder-setup && make BUILD_BRANCH=${params.BUILD_BRANCH} VERSION=${params.VERSION} -f Makefile.docker build &&  docker image ls
         """
       }
     }
