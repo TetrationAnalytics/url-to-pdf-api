@@ -7,6 +7,7 @@ DOCKER_REPOSITORY ?= artifacts.tet.wtf:6557
 DOCKER_USERNAME ?= h4re1
 DOCKER_PASSWORD := $$(cat ~/.jfrog/jfrog-cli.conf | jq -r '.artifactory | .[] | select(.serverId == "artifactory-sjc-b4") | .apiKey')
 CENTOS6_DOCKER_IMAGE = package-centos6:latest
+PDF_PRINTER_IMAGE ?= $(DOCKER_REPOSITORY)/pdf-printer
 
 .PHONY: build
 .ONESHELL:
@@ -21,4 +22,6 @@ build:
 	sudo docker cp $${id}:$(BUILD_HOME)/pdf-printer-build/docker/ ./
 	sudo docker rm $${id}
 	sudo chmod -R 0777 ./docker
-	docker build --build-arg RPM_VERSION=$(VERSION) -t pdf_printer-$(VERSION):$(TAG) docker/
+	docker build --build-arg RPM_VERSION=$(VERSION) -t $(PDF_PRINTER_IMAGE)-$(VERSION):$(TAG) docker/
+	docker push $(PDF_PRINTER_IMAGE)-$(VERSION):$(TAG)
+	docker save $(PDF_PRINTER_IMAGE)-$(VERSION):$(TAG) | gzip > docker/$(PDF_PRINTER_IMAGE)-$(VERSION)-$(TAG).tar.gz
