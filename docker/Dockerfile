@@ -3,7 +3,7 @@ FROM $BASE_IMAGE
 
 ARG RPM_VERSION
 
-USER h4ci1
+USER root
 WORKDIR /opt/pdf_printer
 
 ENV NODE_ENV=development
