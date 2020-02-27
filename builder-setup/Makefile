@@ -19,7 +19,7 @@ build: prepare
 
 .PHONY: deliver
 deliver:
-	jfrog rt upload rpms/pdf_printer-$(VERSION)-1.x86_64.rpm acceptance-local/pdf_printer/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
+	jfrog rt upload docker/pdf_printer-$(VERSION)-1.x86_64.rpm acceptance-local/pdf_printer/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
 	jfrog rt build-publish ${JOB_NAME} ${BUILD_NUMBER}
 
 .PHONY: promote
