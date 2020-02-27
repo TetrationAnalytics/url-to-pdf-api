@@ -78,4 +78,4 @@
 
 - name: Copy rpm file to serving directory
   become: true
-  shell: cp {{ lastest_rpm.path }} {{ dst_rpm_dir }}/
+  shell: cp {{ lastest_rpm.path }} {{ dst_rpm_dir }}
