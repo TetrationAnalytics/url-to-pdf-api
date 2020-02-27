@@ -48,7 +48,7 @@ pipeline {
     stage('Deliver') {
       steps {
         sh """
-          cd builder-setup && make deliver VERSION=${params.VERSION}
+          ls docker/ && cd builder-setup && make deliver VERSION=${params.VERSION} TAG=${params.TAG}
         """
       }
     }
