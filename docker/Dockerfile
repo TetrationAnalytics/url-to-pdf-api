@@ -29,8 +29,8 @@ ENV PDF_DEBUG_MODE=false
 COPY pdf_printer-$RPM_VERSION-1.x86_64.rpm ./
 
 # Use alien command instead
-RUN alien -i  pdf_printer-1.0.0-1.x86_64.rpm
-RUN rm pdf_printer-1.0.0-1.x86_64.rpm
+RUN alien -i  pdf_printer-$RPM_VERSION-1.x86_64.rpm
+RUN rm pdf_printer-$RPM_VERSION-1.x86_64.rpm
 
 EXPOSE 19090
 CMD ["/usr/local/bin/npm", "start"]
