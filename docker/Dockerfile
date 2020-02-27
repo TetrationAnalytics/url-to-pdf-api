@@ -6,6 +6,9 @@ ARG RPM_VERSION
 USER root
 WORKDIR /opt/pdf_printer
 
+#TODO: Move this step to base image
+RUN apt-get update && apt-get install -yq  alien dpkg-dev debhelper build-essential
+
 ENV NODE_ENV=development
 ENV PDF_PORT=19090
 ENV PDF_ALLOW_HTTP=true
@@ -24,7 +27,10 @@ ENV PDF_IGNORE_HTTPS_ERRORS=true
 ENV PDF_DEBUG_MODE=false
 
 COPY pdf_printer-$RPM_VERSION-1.x86_64.rpm ./
-RUN rpm -ivh pdf_printer-$RPM_VERSION-1.x86_64.rpm && rm pdf_printer-$RPM_VERSION-1.x86_64.rpm
+
+# Use alien command instead
+RUN alien -i  pdf_printer-1.0.0-1.x86_64.rpm
+RUN rm pdf_printer-1.0.0-1.x86_64.rpm
 
 EXPOSE 19090
 CMD ["/usr/local/bin/npm", "start"]
