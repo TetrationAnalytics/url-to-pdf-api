@@ -2,6 +2,8 @@ DOCKER_REPOSITORY ?= artifacts.tet.wtf:6557
 DOCKER_USERNAME ?= h4re1
 DOCKER_PASSWORD := $$(cat ~/.jfrog/jfrog-cli.conf | jq -r '.artifactory | .[] | select(.serverId == "artifactory-sjc-b4") | .apiKey')
 PDF_PRINTER_IMAGE ?= $(DOCKER_REPOSITORY)/pdf-printer
+ITER ?= 1
+DESCRIPTION ?= 'Tetration Compliance Report Printer'
 
 all: build
 
@@ -26,6 +28,20 @@ build: prepare
 deliver:
 	@echo "$(DOCKER_PASSWORD)" | sudo docker login $(DOCKER_REPOSITORY) -u="$(DOCKER_USERNAME)" --password-stdin
 	docker save $(PDF_PRINTER_IMAGE)-$(VERSION):$(TAG) | gzip > docker/pdf-printer-$(VERSION)-$(TAG).tar.gz
+	touch docker/VERSION
+	echo $(VERSION) > docker/VERSION
+	fpm -C docker -s dir \
+    --rpm-os linux  \
+		-t rpm \
+		-n pdf-printer \
+		-v $(VERSION) \
+		--iteration $(ITER) \
+		-a noarch \
+		--vendor Tetration \
+    --maintainer 'Cisco Tetration Analytics' \
+		--description "$(DESCRIPTION)" 
+	
+	ls docker/
 	jfrog rt upload docker/pdf-printer-$(VERSION)-$(TAG).tar.gz acceptance-local/pdf_printer/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
 	jfrog rt upload docker/pdf_printer-$(VERSION)-1.x86_64.rpm acceptance-local/pdf_printer/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
 	jfrog rt build-publish ${JOB_NAME} ${BUILD_NUMBER}
