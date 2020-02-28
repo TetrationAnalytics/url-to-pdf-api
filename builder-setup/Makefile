@@ -36,6 +36,8 @@ deliver:
 		-n pdf-printer \
 		-v $(VERSION) \
 		--iteration $(ITER) \
+		-x *.rpm \
+		-x Dockerfile \
 		-a noarch \
 		--vendor Tetration \
     --maintainer 'Cisco Tetration Analytics' \
