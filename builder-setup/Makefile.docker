@@ -40,4 +40,5 @@ build:
 		--vendor Tetration \
     --maintainer 'Cisco Tetration Analytics' \
 		--description "$(DESCRIPTION)"
-    ls docker/ 
+    
+	pwd && ls
