@@ -23,44 +23,28 @@ prepare:
 .PHONY: build
 build: prepare
 	ansible-playbook $(HOME_DIR)/pdf-printer-build/builder-setup/ansible/playbooks/pdf_printer_build_pkgr.yml -i $(HOME_DIR)/pdf-printer-build/builder-setup/ansible/inventory/builder -v -e "build_version=${VERSION}" -c local
-	docker build --build-arg RPM_VERSION=$(VERSION) -t $(PDF_PRINTER_IMAGE)-$(VERSION):$(TAG) docker/
-	docker save $(PDF_PRINTER_IMAGE)-$(VERSION):$(TAG) | gzip > docker/pdf-printer-$(VERSION)-$(TAG).tar.gz
-	fpm -C docker -s dir \
-    --rpm-os linux  \
-		-t rpm \
-		-n pdf-printer \
-		-v $(VERSION) \
-		--iteration $(ITER) \
-		-x *.rpm \
-		-x Dockerfile \
-		-a noarch \
-		--vendor Tetration \
-    --maintainer 'Cisco Tetration Analytics' \
-		--description "$(DESCRIPTION)"
- 
-	pwd && ls && ls docker/
 
 .PHONY: deliver
 deliver:
-	@echo "$(DOCKER_PASSWORD)" | sudo docker login $(DOCKER_REPOSITORY) -u="$(DOCKER_USERNAME)" --password-stdin
-	docker save $(PDF_PRINTER_IMAGE)-$(VERSION):$(TAG) | gzip > docker/pdf-printer-$(VERSION)-$(TAG).tar.gz
-	touch docker/VERSION
-	echo $(VERSION) > docker/VERSION
-	fpm -C docker -s dir \
-    --rpm-os linux  \
-		-t rpm \
-		-n pdf-printer \
-		-v $(VERSION) \
-		--iteration $(ITER) \
-		-x *.rpm \
-		-x Dockerfile \
-		-a noarch \
-		--vendor Tetration \
-    --maintainer 'Cisco Tetration Analytics' \
-		--description "$(DESCRIPTION)" 
+#	@echo "$(DOCKER_PASSWORD)" | sudo docker login $(DOCKER_REPOSITORY) -u="$(DOCKER_USERNAME)" --password-stdin
+#	docker save $(PDF_PRINTER_IMAGE)-$(VERSION):$(TAG) | gzip > docker/pdf-printer-$(VERSION)-$(TAG).tar.gz
+#	touch docker/VERSION
+#	echo $(VERSION) > docker/VERSION
+#	fpm -C docker -s dir \
+#    --rpm-os linux  \
+#		-t rpm \
+#		-n pdf-printer \
+#		-v $(VERSION) \
+#		--iteration $(ITER) \
+#		-x *.rpm \
+#		-x Dockerfile \
+#		-a noarch \
+#		--vendor Tetration \
+#    --maintainer 'Cisco Tetration Analytics' \
+#		--description "$(DESCRIPTION)" 
 	
-	ls docker/
-	jfrog rt upload docker/pdf-printer-$(VERSION)-$(TAG).tar.gz acceptance-local/pdf_printer/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
+#	ls docker/
+#	jfrog rt upload docker/pdf-printer-$(VERSION)-$(TAG).tar.gz acceptance-local/pdf_printer/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
 	jfrog rt upload docker/pdf_printer-$(VERSION)-1.x86_64.rpm acceptance-local/pdf_printer/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
 	jfrog rt build-publish ${JOB_NAME} ${BUILD_NUMBER}
 
