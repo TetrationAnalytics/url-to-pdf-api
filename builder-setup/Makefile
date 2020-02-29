@@ -24,6 +24,23 @@ prepare:
 build: prepare
 	ansible-playbook $(HOME_DIR)/pdf-printer-build/builder-setup/ansible/playbooks/pdf_printer_build_pkgr.yml -i $(HOME_DIR)/pdf-printer-build/builder-setup/ansible/inventory/builder -v -e "build_version=${VERSION}" -c local
 
+.PHONY: rpm
+rpm: prepare
+	fpm -C docker -s dir \
+    --rpm-os linux  \
+		-t rpm \
+		-n pdf-printer \
+		-v $(VERSION) \
+		--iteration $(ITER) \
+		-x *.rpm \
+		-x Dockerfile \
+		-a noarch \
+		--vendor Tetration \
+    --maintainer 'Cisco Tetration Analytics' \
+		--description "$(DESCRIPTION)"
+
+	pwd && ls
+
 .PHONY: deliver
 deliver:
 #	@echo "$(DOCKER_PASSWORD)" | sudo docker login $(DOCKER_REPOSITORY) -u="$(DOCKER_USERNAME)" --password-stdin
