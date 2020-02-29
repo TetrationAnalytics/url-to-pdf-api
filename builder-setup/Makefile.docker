@@ -28,5 +28,9 @@ build:
 	docker push $(PDF_PRINTER_IMAGE)-$(VERSION):$(TAG)
 	docker save $(PDF_PRINTER_IMAGE)-$(VERSION):$(TAG) | gzip > docker/pdf-printer-$(VERSION)-$(TAG).tar.gz
 	pwd && ls && ls docker/
-	id=$$(docker create -i -u $(BUILD_USER) -w $(BUILD_HOME) $(DOCKER_REPOSITORY)/$(DOCKER_IMAGE) /bin/bash -l -c "export BUILD_BRANCH=$(BUILD_BRANCH) && export VERSION=$(VERSION) && ls -a && cd pdf-printer-build/builder-setup && make build")
+	id=$$(docker create -i -u $(BUILD_USER) -w $(BUILD_HOME) $(DOCKER_REPOSITORY)/$(DOCKER_IMAGE) /bin/bash -l -c "export BUILD_BRANCH=$(BUILD_BRANCH) && export VERSION=$(VERSION) && ls -a && cd pdf-printer-build/builder-setup && make rpm")
 	@echo Container ID is $${id}
+	sudo docker cp pdf-printer-1.0.0-latest.tar.gz $${id}:/$(BUILD_HOME)/
+	sudo docker start -ai $${id}
+	sudo docker stop $${id}
+	sudo docker rm $${id}
