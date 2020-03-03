@@ -47,9 +47,9 @@ pipeline {
               url: 'git@github.com:TetrationAnalytics/deploy-ansible.git',
               refspec: '+refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/remotes/origin/tags/*'
            ]]
-         ])
+        ])
 
-          checkout([$class: 'GitSCM',
+        checkout([$class: 'GitSCM',
            branches: [[name: 'refs/remotes/origin/${TETRATION_VERSION}']],
            doGenerateSubmoduleConfigurations: false,
            extensions: [[$class: 'CleanBeforeCheckout'],
@@ -61,7 +61,7 @@ pipeline {
               url: 'git@github.com:TetrationAnalytics/tetration.git',
               refspec: '+refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/remotes/origin/tags/*'
             ]]
-          ])
+        ])
       }
     }
     stage('Build RPM and Docker Image') {
