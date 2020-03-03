@@ -1,3 +1,4 @@
+
 pipeline {
   agent {
     label 'docker'
@@ -6,8 +7,6 @@ pipeline {
     string(name: 'BUILD_BRANCH', defaultValue: 'master', description: 'Build Branch')
     string(name: 'VERSION', defaultValue: '1.0.0', description: 'RPM Version')
     string(name: 'TAG', defaultValue: 'latest', description: 'Docker Image Tag')
-    string(name: 'DEPLOY_ANSIBLE_VERSION', defaultValue: '3.2.1.1.devel', description: 'image version')
-    string(name: 'TETRATION_VERSION', defaultValue: '3.2.1.1.devel', description: 'image version')
   }
   options {
     timestamps()
@@ -28,43 +27,12 @@ pipeline {
         checkout([$class: 'GitSCM',
           branches: [[name: "*/${params.BUILD_BRANCH}"]],
           doGenerateSubmoduleConfigurations: false,
-          extensions: [[$class: 'CleanBeforeCheckout'],
-           [$class: 'PruneStaleBranch'],
-           [$class: 'RelativeTargetDirectory', relativeTargetDir: 'url-to-pdf-api'],
-           [$class: 'CloneOption', depth: 0, noTags: false, reference: '', shallow: true, timeout: 30]],
+          extensions: [[$class: 'CleanBeforeCheckout']],
           submoduleCfg: [],
           userRemoteConfigs: [[
             url: 'git@github.com:TetrationAnalytics/url-to-pdf-api.git',
             refspec: '+refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/remotes/origin/tags/*'
           ]]
-        ])
-
-        checkout([$class: 'GitSCM',
-          branches: [[name: "*/${params.DEPLOY_ANSIBLE_VERSION}"]],
-          doGenerateSubmoduleConfigurations: false,
-          extensions: [[$class: 'CleanBeforeCheckout'],
-            [$class: 'PruneStaleBranch'],
-            [$class: 'RelativeTargetDirectory', relativeTargetDir: 'deploy-ansible'],
-            [$class: 'CloneOption', depth: 0, noTags: false, reference: '', shallow: true, timeout: 30]],
-            submoduleCfg: [],
-            userRemoteConfigs: [[
-              url: 'git@github.com:TetrationAnalytics/deploy-ansible.git',
-              refspec: '+refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/remotes/origin/tags/*'
-            ]]
-        ])
-
-        checkout([$class: 'GitSCM',
-          branches: [[name: "${params.$TETRATION_VERSION}"]],
-          doGenerateSubmoduleConfigurations: false,
-          extensions: [[$class: 'CleanBeforeCheckout'],
-            [$class: 'PruneStaleBranch'],
-            [$class: 'RelativeTargetDirectory', relativeTargetDir: 'tetration'],
-            [$class: 'CloneOption', depth: 0, noTags: false, reference: '', shallow: true, timeout: 30]],
-            submoduleCfg: [],
-            userRemoteConfigs: [[
-              url: 'git@github.com:TetrationAnalytics/tetration.git',
-              refspec: '+refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/remotes/origin/tags/*'
-            ]]
         ])
       }
     }
