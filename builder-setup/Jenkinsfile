@@ -7,7 +7,7 @@ pipeline {
     string(name: 'BUILD_BRANCH', defaultValue: 'master', description: 'Build Branch')
     string(name: 'VERSION', defaultValue: '1.0.0', description: 'RPM Version')
     string(name: 'TAG', defaultValue: 'latest', description: 'Docker Image Tag')
-    string(name: 'deploy_ansible_version', description: 'image version', defaultValue: '3.2.1.1.devel')
+    string(name: 'DEPLOY_ANSIBLE_VERSION', description: 'image version', defaultValue: '3.2.1.1.devel')
   }
   options {
     timestamps()
@@ -26,6 +26,17 @@ pipeline {
     stage('Checkout') {
       steps {
         checkout([$class: 'GitSCM',
+          branches: [[name: "*/${params.DEPLOY_ANSIBLE_VERSION}"]],
+          doGenerateSubmoduleConfigurations: false,
+          extensions: [[$class: 'CleanBeforeCheckout']],
+          submoduleCfg: [],
+          userRemoteConfigs: [[
+            url: 'git@github.com:TetrationAnalytics/deploy-ansible.git',
+            refspec: '+refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/remotes/origin/tags/*'
+          ]]
+        ])
+
+        checkout([$class: 'GitSCM',
           branches: [[name: "*/${params.BUILD_BRANCH}"]],
           doGenerateSubmoduleConfigurations: false,
           extensions: [[$class: 'CleanBeforeCheckout']],
@@ -35,17 +46,6 @@ pipeline {
             refspec: '+refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/remotes/origin/tags/*'
           ]]
         ])
-
-        checkout([$class: 'GitSCM',
-            branches: [[name: 'refs/remotes/origin/${deploy_ansible_version}']],
-            doGenerateSubmoduleConfigurations: false,
-            extensions: [[$class: 'CleanBeforeCheckout'],
-            [$class: 'PruneStaleBranch'],
-            [$class: 'RelativeTargetDirectory', relativeTargetDir: 'deploy-ansible'],
-            [$class: 'CloneOption', depth: 0, noTags: false, reference: '', shallow: true, timeout: 30]],
-            submoduleCfg: [],
-            userRemoteConfigs: [[credentialsId: '05a8f624-3955-4fcd-bff3-35ec8a6aad28',
-            url: 'git@github.com:TetrationAnalytics/deploy-ansible.git']]])
       }
     }
     stage('Build RPM and Docker Image') {
