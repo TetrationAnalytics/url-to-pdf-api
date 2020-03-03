@@ -36,6 +36,29 @@ pipeline {
             refspec: '+refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/remotes/origin/tags/*'
           ]]
         ])
+        checkout([$class: 'GitSCM',
+           branches: [[name: 'refs/remotes/origin/${version}']],
+           doGenerateSubmoduleConfigurations: false,
+           extensions: [[$class: 'CleanBeforeCheckout'],
+           [$class: 'PruneStaleBranch'],
+           [$class: 'RelativeTargetDirectory', relativeTargetDir: 'deploy-ansible'],
+           [$class: 'CloneOption', depth: 0, noTags: false, reference: '', shallow: true, timeout: 30]],
+           submoduleCfg: [],
+           userRemoteConfigs: [[credentialsId: '05a8f624-3955-4fcd-bff3-35ec8a6aad28',
+           url: 'git@github.com:TetrationAnalytics/deploy-ansible.git']]
+         ])
+
+          checkout([$class: 'GitSCM',
+           branches: [[name: 'refs/remotes/origin/${version}']],
+           doGenerateSubmoduleConfigurations: false,
+           extensions: [[$class: 'CleanBeforeCheckout'],
+           [$class: 'PruneStaleBranch'],
+           [$class: 'RelativeTargetDirectory', relativeTargetDir: 'tetration'],
+           [$class: 'CloneOption', depth: 0, noTags: false, reference: '', shallow: true, timeout: 30]],
+           submoduleCfg: [],
+           userRemoteConfigs: [[credentialsId: '05a8f624-3955-4fcd-bff3-35ec8a6aad28',
+           url: 'git@github.com:TetrationAnalytics/tetration.git']]
+          ])
       }
     }
     stage('Build RPM and Docker Image') {
