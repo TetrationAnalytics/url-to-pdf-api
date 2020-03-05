@@ -29,7 +29,7 @@ rpm:
 	fpm -C docker -s dir \
     --rpm-os linux  \
 		-t rpm \
-		-n pdf-printer \
+		-n tetration_os_compliance_printer_k9 \
 		-v $(VERSION) \
 		--iteration $(ITER) \
 		-x *.rpm \
