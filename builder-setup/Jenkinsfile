@@ -30,8 +30,9 @@ pipeline {
           branches: [[name: "*/${params.DEPLOY_ANSIBLE_VERSION}"]],
           doGenerateSubmoduleConfigurations: false,
           extensions: [
+            [$class: 'CleanBeforeCheckout'],
             [$class: 'PruneStaleBranch'],
-            [$class: 'CloneOption', depth: 0, noTags: false, reference: '', shallow: true, timeout: 30]]
+            [$class: 'CloneOption', depth: 0, noTags: false, reference: '', shallow: true, timeout: 30]
            ],
           submoduleCfg: [],
           userRemoteConfigs: [[
@@ -45,8 +46,9 @@ pipeline {
           branches: [[name: "*/${params.BUILD_BRANCH}"]],
           doGenerateSubmoduleConfigurations: false,
           extensions: [
+            [$class: 'CleanBeforeCheckout'],
             [$class: 'PruneStaleBranch'],
-            [$class: 'CloneOption', depth: 0, noTags: false, reference: '', shallow: true, timeout: 30]]
+            [$class: 'CloneOption', depth: 0, noTags: false, reference: '', shallow: true, timeout: 30]
            ],
           submoduleCfg: [],
           userRemoteConfigs: [[
