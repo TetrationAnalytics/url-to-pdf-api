@@ -33,5 +33,5 @@ build:
 	sudo docker cp . $${id}:/$(BUILD_HOME)/
 	sudo docker start -ai $${id}
 	sudo docker stop $${id}
-	sudo docker cp $${id}:${BUILD_HOME}/tetration_os_compliance_printer_k9-$(VERSION).noarch.rpm ./
+	sudo docker cp $${id}:${BUILD_HOME}/tetration_os_compliance_printer_k9-$(VERSION)-1.noarch.rpm ./
 	sudo docker rm $${id}
