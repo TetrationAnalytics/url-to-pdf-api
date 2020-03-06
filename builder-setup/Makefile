@@ -43,26 +43,8 @@ rpm:
 
 .PHONY: deliver
 deliver:
-#	@echo "$(DOCKER_PASSWORD)" | sudo docker login $(DOCKER_REPOSITORY) -u="$(DOCKER_USERNAME)" --password-stdin
-#	docker save $(PDF_PRINTER_IMAGE)-$(VERSION):$(TAG) | gzip > docker/pdf-printer-$(VERSION)-$(TAG).tar.gz
-#	touch docker/VERSION
-#	echo $(VERSION) > docker/VERSION
-#	fpm -C docker -s dir \
-#    --rpm-os linux  \
-#		-t rpm \
-#		-n pdf-printer \
-#		-v $(VERSION) \
-#		--iteration $(ITER) \
-#		-x *.rpm \
-#		-x Dockerfile \
-#		-a noarch \
-#		--vendor Tetration \
-#    --maintainer 'Cisco Tetration Analytics' \
-#		--description "$(DESCRIPTION)" 
-	
-#	ls docker/
-#	jfrog rt upload docker/pdf-printer-$(VERSION)-$(TAG).tar.gz acceptance-local/pdf_printer/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
 	jfrog rt upload docker/pdf_printer-$(VERSION)-1.x86_64.rpm acceptance-local/pdf_printer/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
+	jfrog rt upload builder-setup/tetration_os_compliance_printer_k9-$(VERSION)-1.noarch.rpm acceptance-local/pdf_printer/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
 	jfrog rt build-publish ${JOB_NAME} ${BUILD_NUMBER}
 
 .PHONY: promote
