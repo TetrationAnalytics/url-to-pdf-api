@@ -29,7 +29,7 @@ rpm:
 	fpm -C docker -s dir \
     --rpm-os linux  \
 		-t rpm \
-		-n tetration_os_compliance_printer_k9 \
+		-n tetration_os_cspm_k9 \
 		-v $(VERSION) \
 		--iteration $(ITER) \
 		-x *.rpm \
@@ -44,7 +44,7 @@ rpm:
 .PHONY: deliver
 deliver:
 	jfrog rt upload docker/pdf_printer-$(VERSION)-1.x86_64.rpm acceptance-local/pdf_printer/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
-	jfrog rt upload tetration_os_compliance_printer_k9-$(VERSION)-1.noarch.rpm acceptance-local/pdf_printer/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
+	jfrog rt upload tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm acceptance-local/pdf_printer/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
 	jfrog rt build-publish ${JOB_NAME} ${BUILD_NUMBER}
 
 .PHONY: promote
