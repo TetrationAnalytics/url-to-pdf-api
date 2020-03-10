@@ -1,7 +1,7 @@
 
 pipeline {
   agent {
-    label 'docker'
+    label 'esxi-prod'
   }
   parameters {
     string(name: 'VERSION', defaultValue: '1.0.0', description: 'RPM Version')
