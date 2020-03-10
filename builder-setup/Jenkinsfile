@@ -7,7 +7,6 @@ pipeline {
     string(name: 'BUILD_BRANCH', defaultValue: 'master', description: 'Build Branch')
     string(name: 'VERSION', defaultValue: '1.0.0', description: 'RPM Version')
     string(name: 'TAG', defaultValue: 'latest', description: 'Docker Image Tag')
-    string(name: 'DEPLOY_ANSIBLE_VERSION', description: 'image version', defaultValue: '3.2.1.1.devel')
   }
   options {
     timestamps()
