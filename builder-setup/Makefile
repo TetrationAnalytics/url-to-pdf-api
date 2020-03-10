@@ -47,9 +47,15 @@ deliver:
 	jfrog rt upload tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm acceptance-local/pdf_printer/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
 	jfrog rt build-publish ${JOB_NAME} ${BUILD_NUMBER}
 
+.PHONY: sign-rpm
+sign-rpm:
+	jfrog rt dl acceptance-local/pdf_printer/tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm --flat=true
+	$(HOME)/sign-rpm.exp tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm
+	jfrog rt u tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm acceptance-local/pdf_printer/
+
 .PHONY: promote
 promote:
-	jfrog rt cp "acceptance-local/pdf_printer/pdf_printer_$(VERSION)*.rpm" union-local/
+	jfrog rt cp "acceptance-local/pdf_printer/tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm" union-local/
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-25s\033[0m %s\n", $$1, $$2}'

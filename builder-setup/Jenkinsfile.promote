@@ -1,0 +1,50 @@
+
+pipeline {
+  agent {
+    label 'docker'
+  }
+  parameters {
+    string(name: 'VERSION', defaultValue: '1.0.0', description: 'RPM Version')
+  }
+  options {
+    timestamps()
+    ansiColor('xterm')
+    buildDiscarder(logRotator(numToKeepStr:'20'))
+    timeout(time: 50, unit: 'MINUTES')
+  }
+  stages {
+    stage('Notify') {
+      steps {
+        sh """
+          curl -X POST -H "Content-Type: application/json" -d '{"attachments": [{"color": "#FFFF00", "text":":rocket: STARTED: Job '"$JOB_NAME"' ['"$BUILD_NUMBER"'] ('"$BUILD_URL"')"}]}' "https://tetration.slack.com/services/hooks/jenkins-ci?token=l9Wym3dTxAzelbNZcmWZQTTy"
+        """
+      }
+    }
+    stage('sign') {
+      steps {
+        sh """
+          cd builder-setup && make sign-rpm VERSION=${params.VERSION}
+        """
+      }
+    }
+    stage('promote') {
+      steps {
+        sh """
+          cd builder-setup && make promote VERSION=${params.VERSION}
+        """
+      }
+    }
+  }
+  post {
+    success {
+      sh """
+        curl -X POST -H "Content-Type: application/json" -d '{"attachments": [{"color": "#00FF00", "text":":sunny: SUCCESSFUL: Job '"$JOB_NAME"' ['"$BUILD_NUMBER"'] ('"$BUILD_URL"')"}]}' "https://tetration.slack.com/services/hooks/jenkins-ci?token=l9Wym3dTxAzelbNZcmWZQTTy"
+      """
+    }
+    failure {
+      sh """
+        curl -X POST -H "Content-Type: application/json" -d '{"attachments": [{"color": "#FF0000", "text":":bomb: FAILED: Job '"$JOB_NAME"' ['"$BUILD_NUMBER"'] ('"$BUILD_URL"')"}]}' "https://tetration.slack.com/services/hooks/jenkins-ci?token=l9Wym3dTxAzelbNZcmWZQTTy"
+      """
+    }
+  }
+}
