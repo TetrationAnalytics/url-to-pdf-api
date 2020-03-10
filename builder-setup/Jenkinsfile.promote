@@ -1,7 +1,7 @@
 
 pipeline {
   agent {
-    label 'esxi-prod'
+    label 'docker'
   }
   parameters {
     string(name: 'VERSION', defaultValue: '1.0.0', description: 'RPM Version')
@@ -10,12 +10,7 @@ pipeline {
     timestamps()
     ansiColor('xterm')
     buildDiscarder(logRotator(numToKeepStr:'20'))
-    timeout(time: 50, unit: 'MINUTES')
-  }
-  environment {
-      HOME = '/home/h4re1'
-      http_proxy = 'http://proxy.esl.cisco.com:80'
-      https_proxy = 'http://proxy.esl.cisco.com:80'
+    timeout(time: 20, unit: 'MINUTES')
   }
   stages {
     stage('Notify') {
