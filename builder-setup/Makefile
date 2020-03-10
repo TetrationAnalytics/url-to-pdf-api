@@ -26,7 +26,7 @@ build: prepare
 
 .PHONY: rpm
 rpm:
-	fpm -C docker -s dir \
+	fpm -s dir docker/pdf-printer-$(VERSION)-$(TAG).tar.gz=/local/binaries/adhoc/ \
     --rpm-os linux  \
 		-t rpm \
 		-n tetration_os_cspm_k9 \
