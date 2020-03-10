@@ -14,8 +14,8 @@ pipeline {
   }
   environment {
       HOME = '/home/h4re1'
-      'http_proxy' = 'http://proxy.esl.cisco.com:80'
-      'https_proxy' = 'http://proxy.esl.cisco.com:80'
+      http_proxy = 'http://proxy.esl.cisco.com:80'
+      https_proxy = 'http://proxy.esl.cisco.com:80'
   }
   stages {
     stage('Notify') {
