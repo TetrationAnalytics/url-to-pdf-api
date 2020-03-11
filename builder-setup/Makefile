@@ -38,7 +38,7 @@ rpm:
 		--vendor Tetration \
     --maintainer 'Cisco Tetration Analytics' \
 		--description "$(DESCRIPTION)" \
-		tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm=/local/binaries/adhoc
+		pdf-printer-$(VERSION)-$(TAG).tar.gz=/local/binaries/adhoc
 
 	pwd && ls
 
