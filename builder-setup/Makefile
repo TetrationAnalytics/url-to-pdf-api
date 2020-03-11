@@ -38,7 +38,7 @@ rpm:
 		--vendor Tetration \
     --maintainer 'Cisco Tetration Analytics' \
 		--description "$(DESCRIPTION)" \
-		docker/tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm=/local/binaries/adhoc
+		tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm=/local/binaries/adhoc
 
 	pwd && ls
 
