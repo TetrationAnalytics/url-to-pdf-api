@@ -26,7 +26,7 @@ build: prepare
 
 .PHONY: rpm
 rpm:
-	fpm -s dir \
+	fpm -C docker -s dir \
     --rpm-os linux  \
 		-t rpm \
 		-n tetration_os_cspm_k9 \
@@ -38,7 +38,7 @@ rpm:
 		--vendor Tetration \
     --maintainer 'Cisco Tetration Analytics' \
 		--description "$(DESCRIPTION)" \
-		docker=/local/binaries/adhoc
+		docker/*.tar.gz=/local/binaries/adhoc
 
 	pwd && ls
 
