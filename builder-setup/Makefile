@@ -49,7 +49,6 @@ deliver:
 
 .PHONY: sign-rpm
 sign-rpm:
-	jfrog rt dl acceptance-local/pdf_printer/tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm --flat=true
 	$(HOME)/sign-rpm.exp tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm
 	jfrog rt u tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm acceptance-local/pdf_printer/
 

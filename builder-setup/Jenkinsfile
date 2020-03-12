@@ -48,6 +48,13 @@ pipeline {
         """
       }
     }
+    stage('sign RPM') {
+      steps {
+        sh """
+          cd builder-setup && make sign-rpm VERSION=${params.VERSION}
+        """
+      }
+    }
     stage('Deliver') {
       steps {
         sh """
