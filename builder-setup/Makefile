@@ -35,7 +35,7 @@ rpm:
 		-x *.rpm \
 		-x Dockerfile \
 		-a noarch \
-	  --depends 'tetration_os_adhoc_k9 (>= $(VERSION))' \
+	  --depends 'tetration_os_adhoc_k9 >= $(VERSION)' \
 		--vendor Tetration \
     --maintainer 'Cisco Tetration Analytics' \
 		--description "$(DESCRIPTION)" \
