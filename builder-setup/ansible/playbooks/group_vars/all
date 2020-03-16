@@ -1,7 +1,7 @@
 web_default_user: tetter
 proxy_env:
-  http_proxy: {{ http_proxy }}
-  https_proxy: {{ https_proxy }}
-  no_proxy: {{ no_proxy }}
+  http_proxy: "{{ http_proxy }}"
+  https_proxy: "{{ https_proxy }}"
+  no_proxy: "{{ no_proxy }}"
 
 ruby_version: 2.5.3
