@@ -7,6 +7,9 @@ pipeline {
     string(name: 'BUILD_BRANCH', defaultValue: 'master', description: 'Build Branch')
     string(name: 'VERSION', defaultValue: '1.0.0', description: 'RPM Version')
     string(name: 'TAG', defaultValue: 'latest', description: 'Docker Image Tag')
+    string(name: 'NO_PROXY', defaultValue: 'tet.wtf,ocean.af,tetrationanalytics.com,localhost,127.0.0.1', description: 'Proxy Configuration')
+    string(name: 'HTTP_PROXY', defaultValue: 'http://proxy.esl.cisco.com:80', description: 'HTTP Proxy Configuration')
+    string(name: 'HTTPS_PROXY', defaultValue: 'http://proxy.esl.cisco.com:80', description: 'HTTPS Proxy Configuration')
   }
   options {
     timestamps()
@@ -44,7 +47,7 @@ pipeline {
     stage('Build RPM and Docker Image') {
       steps {
         sh """
-          cd builder-setup && make BUILD_BRANCH=${params.BUILD_BRANCH} VERSION=${params.VERSION} -f Makefile.docker build &&  docker image ls && pwd && ls .
+          cd builder-setup && make BUILD_BRANCH=${params.BUILD_BRANCH} VERSION=${params.VERSION} NO_PROXY=${NO_PROXY} HTTP_PROXY=${HTTP_PORXY} HTTPS_PROXY=${HTTPS_PROXY} -f Makefile.docker build &&  docker image ls && pwd && ls .
         """
       }
     }
