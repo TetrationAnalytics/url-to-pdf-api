@@ -48,7 +48,7 @@ pipeline {
       steps {
         sh """
           docker image prune -a --filter "until=2h"
-          cd builder-setup && make BUILD_BRANCH=${params.BUILD_BRANCH} VERSION=${params.VERSION} NO_PROXY=${NO_PROXY} HTTP_PROXY=${HTTP_PORXY} HTTPS_PROXY=${HTTPS_PROXY} -f Makefile.docker build &&  docker image ls && pwd && ls .
+          cd builder-setup && make BUILD_BRANCH=${params.BUILD_BRANCH} VERSION=${params.VERSION} NO_PROXY=${NO_PROXY} HTTP_PROXY=${HTTP_PROXY} HTTPS_PROXY=${HTTPS_PROXY} -f Makefile.docker build &&  docker image ls && pwd && ls .
         """
       }
     }
