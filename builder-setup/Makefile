@@ -24,7 +24,7 @@ prepare:
 # no_proxy: tet.wtf,ocean.af,tetrationanalytics.com,localhost,127.0.0.1
 .PHONY: build
 build: prepare
-	ansible-playbook $(HOME_DIR)/pdf-printer-build/builder-setup/ansible/playbooks/pdf_printer_build_pkgr.yml -i $(HOME_DIR)/pdf-printer-build/builder-setup/ansible/inventory/builder -v -e "build_version=${VERSION} no_proxy=${NO_PROXY} http_proxy=${HTTP_PROXY} https_proxy=${HTTPS_PROXY}" -c local
+	ansible-playbook $(HOME_DIR)/pdf-printer-build/builder-setup/ansible/playbooks/pdf_printer_build_pkgr.yml -i $(HOME_DIR)/pdf-printer-build/builder-setup/ansible/inventory/builder -v -e "build_version=${VERSION} no_proxy=${no_proxy} http_proxy=${http_proxy} https_proxy=${https_proxy}" -c local
 
 .PHONY: rpm
 rpm:

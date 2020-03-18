@@ -9,29 +9,30 @@ DOCKER_PASSWORD := $$(cat ~/.jfrog/jfrog-cli.conf | jq -r '.artifactory | .[] | 
 CENTOS6_DOCKER_IMAGE = package-centos6:latest
 DOCKER_IMAGE ?= ruby-nodejs-centos7:noproxy
 PDF_PRINTER_IMAGE ?= $(DOCKER_REPOSITORY)/pdf-printer
+TAG = latest
 ITER ?= 1
 
 .PHONY: build
 .ONESHELL:
 build:
-	@echo "$(DOCKER_PASSWORD)" | sudo docker login $(DOCKER_REPOSITORY) -u="$(DOCKER_USERNAME)" --password-stdin
-	@sudo docker pull $(DOCKER_REPOSITORY)/$(CENTOS6_DOCKER_IMAGE)
+	@echo "$(DOCKER_PASSWORD)" | docker login $(DOCKER_REPOSITORY) -u="$(DOCKER_USERNAME)" --password-stdin
+	@docker pull $(DOCKER_REPOSITORY)/$(CENTOS6_DOCKER_IMAGE)
 	id=$$(docker create -i -u $(BUILD_USER) -w $(BUILD_HOME) $(DOCKER_REPOSITORY)/$(CENTOS6_DOCKER_IMAGE) /bin/bash -l -c "export BUILD_BRANCH=$(BUILD_BRANCH) && export VERSION=$(VERSION) && export NO_PROXY=$(NO_PROXY) && export HTTP_PROXY=$(HTTP_PROXY) && export HTTPS_PROXY=$(HTTPS_PROXY) && ls -a && cd pdf-printer-build/builder-setup && make build")
 	@echo Container ID is $${id}
-	sudo docker cp ../../pdf-printer-build $${id}:/$(BUILD_HOME)/
-	sudo docker start -ai $${id}
-	sudo docker stop $${id}
-	sudo docker cp $${id}:$(BUILD_HOME)/pdf-printer-build/docker/ ./
-	sudo docker rm $${id}
-	sudo chmod -R 0777 ./docker
-	docker build --build-arg RPM_VERSION=$(VERSION) -t $(PDF_PRINTER_IMAGE)-$(VERSION):$(TAG) docker/
-	docker push $(PDF_PRINTER_IMAGE)-$(VERSION):$(TAG)
+	docker cp ../../pdf-printer-build $${id}:/$(BUILD_HOME)/
+	docker start -ai $${id}
+	docker stop $${id}
+	docker cp $${id}:$(BUILD_HOME)/pdf-printer-build/docker/ ./
+	docker rm $${id}
+	chmod -R 0777 ./docker
+	docker build --build-arg RPM_VERSION=${VERSION} -t ${PDF_PRINTER_IMAGE}-${VERSION}:${TAG} docker/
 	docker save $(PDF_PRINTER_IMAGE)-$(VERSION):$(TAG) | gzip > docker/pdf-printer-$(VERSION)-$(TAG).tar.gz
 	pwd && ls && ls docker/
 	id=$$(docker create -i -u $(BUILD_USER) -w $(BUILD_HOME) $(DOCKER_REPOSITORY)/$(DOCKER_IMAGE) /bin/bash -l -c "export BUILD_BRANCH=$(BUILD_BRANCH) && export VERSION=$(VERSION) && export TAG=$(TAG) && ls -a && make rpm")
 	@echo Container ID is $${id}
-	sudo docker cp . $${id}:/$(BUILD_HOME)/
-	sudo docker start -ai $${id}
-	sudo docker stop $${id}
-	sudo docker cp $${id}:${BUILD_HOME}/tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm ./
-	sudo docker rm $${id}
+	docker cp . $${id}:/$(BUILD_HOME)/
+	docker start -ai $${id}
+	docker stop $${id}
+	docker cp $${id}:${BUILD_HOME}/tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm ./
+	docker rm $${id}
+	docker rmi $(PDF_PRINTER_IMAGE)-$(VERSION):$(TAG)
