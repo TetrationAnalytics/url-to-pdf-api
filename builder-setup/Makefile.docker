@@ -16,8 +16,7 @@ ITER ?= 1
 build:
 	@echo "$(DOCKER_PASSWORD)" | sudo docker login $(DOCKER_REPOSITORY) -u="$(DOCKER_USERNAME)" --password-stdin
 	@sudo docker pull $(DOCKER_REPOSITORY)/$(CENTOS6_DOCKER_IMAGE)
-	printenv
-	id=$$(docker create -i -u $(BUILD_USER) -w $(BUILD_HOME) $(DOCKER_REPOSITORY)/$(CENTOS6_DOCKER_IMAGE) /bin/bash -l -c "export BUILD_BRANCH=$(BUILD_BRANCH) && export VERSION=$(VERSION) && export NO_PROXY=$(NO_PROXY) && export HTTP_PROXY=$(HTTP_PROXY) && export HTTPS_PROXY=$(HTTPS_PROXY) && cd pdf-printer-build/builder-setup && make build")
+	id=$$(docker create -i -u $(BUILD_USER) -w $(BUILD_HOME) $(DOCKER_REPOSITORY)/$(CENTOS6_DOCKER_IMAGE) /bin/bash -l -c "export BUILD_BRANCH=$(BUILD_BRANCH) && export VERSION=$(VERSION) && export NO_PROXY=$(NO_PROXY) && export HTTP_PROXY=$(HTTP_PROXY) && export HTTPS_PROXY=$(HTTPS_PROXY) && ls -a && cd pdf-printer-build/builder-setup && make build")
 	@echo Container ID is $${id}
 	sudo docker cp ../../pdf-printer-build $${id}:/$(BUILD_HOME)/
 	sudo docker start -ai $${id}
@@ -25,8 +24,10 @@ build:
 	sudo docker cp $${id}:$(BUILD_HOME)/pdf-printer-build/docker/ ./
 	sudo docker rm $${id}
 	sudo chmod -R 0777 ./docker
-	sudo docker build --build-arg RPM_VERSION=$(VERSION) -t $(PDF_PRINTER_IMAGE)-$(VERSION):$(TAG) docker/
-	sudo docker save $(PDF_PRINTER_IMAGE)-$(VERSION):$(TAG) | gzip > docker/pdf-printer-$(VERSION)-$(TAG).tar.gz
+	docker build --build-arg RPM_VERSION=$(VERSION) -t $(PDF_PRINTER_IMAGE)-$(VERSION):$(TAG) docker/
+	docker push $(PDF_PRINTER_IMAGE)-$(VERSION):$(TAG)
+	docker save $(PDF_PRINTER_IMAGE)-$(VERSION):$(TAG) | gzip > docker/pdf-printer-$(VERSION)-$(TAG).tar.gz
+	pwd && ls && ls docker/
 	id=$$(docker create -i -u $(BUILD_USER) -w $(BUILD_HOME) $(DOCKER_REPOSITORY)/$(DOCKER_IMAGE) /bin/bash -l -c "export BUILD_BRANCH=$(BUILD_BRANCH) && export VERSION=$(VERSION) && export TAG=$(TAG) && ls -a && make rpm")
 	@echo Container ID is $${id}
 	sudo docker cp . $${id}:/$(BUILD_HOME)/
@@ -34,4 +35,3 @@ build:
 	sudo docker stop $${id}
 	sudo docker cp $${id}:${BUILD_HOME}/tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm ./
 	sudo docker rm $${id}
-	sudo docker rmi $(PDF_PRINTER_IMAGE)-$(VERSION):$(TAG)
