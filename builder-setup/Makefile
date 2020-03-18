@@ -53,7 +53,7 @@ deliver:
 .PHONY: sign-rpm
 sign-rpm:
 	sudo chown $(USER):$(USER) tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm
-	$(HOME)/sign-rpm.exp tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm
+	$(HOME)/bin/rpm-sign.exp tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm
 
 .PHONY: promote
 promote:
