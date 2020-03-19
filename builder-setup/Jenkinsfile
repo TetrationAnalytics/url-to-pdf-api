@@ -44,7 +44,6 @@ pipeline {
     stage('Build RPM and Docker Image') {
       steps {
         sh """
-          docker image prune -a --filter "until=2h"
           cd builder-setup && make BUILD_BRANCH=${params.BUILD_BRANCH} VERSION=${params.VERSION} NO_PROXY=${no_proxy} HTTP_PROXY=${http_proxy} HTTPS_PROXY=${https_proxy} -f Makefile.docker build &&  docker image ls && pwd && ls .
         """
       }

@@ -25,7 +25,7 @@ build:
 	docker cp $${id}:$(BUILD_HOME)/pdf-printer-build/docker/ ./
 	docker rm $${id}
 	chmod -R 0777 ./docker
-	docker build --build-arg RPM_VERSION=${VERSION} -t ${PDF_PRINTER_IMAGE}-${VERSION}:${TAG} docker/
+	docker build --build-arg RPM_VERSION=${VERSION} -t ${PDF_PRINTER_IMAGE}-`echo ${VERSION} | tr A-Z a-z`:${TAG} docker/
 	docker save $(PDF_PRINTER_IMAGE)-$(VERSION):$(TAG) | gzip > docker/pdf-printer-$(VERSION)-$(TAG).tar.gz
 	pwd && ls && ls docker/
 	id=$$(docker create -i -u $(BUILD_USER) -w $(BUILD_HOME) $(DOCKER_REPOSITORY)/$(DOCKER_IMAGE) /bin/bash -l -c "export BUILD_BRANCH=$(BUILD_BRANCH) && export VERSION=$(VERSION) && export TAG=$(TAG) && ls -a && make rpm")
