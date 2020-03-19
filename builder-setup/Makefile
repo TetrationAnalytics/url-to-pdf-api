@@ -4,6 +4,7 @@ DOCKER_PASSWORD := $$(cat ~/.jfrog/jfrog-cli.conf | jq -r '.artifactory | .[] | 
 PDF_PRINTER_IMAGE ?= $(DOCKER_REPOSITORY)/pdf-printer
 ITER ?= 1
 DESCRIPTION ?= 'Tetration Compliance Report Printer'
+LOWER_VERSION = `echo $(VERSION) | tr A-Z a-z`
 
 all: build
 
@@ -24,7 +25,7 @@ prepare:
 # no_proxy: tet.wtf,ocean.af,tetrationanalytics.com,localhost,127.0.0.1
 .PHONY: build
 build: prepare
-	ansible-playbook $(HOME_DIR)/pdf-printer-build/builder-setup/ansible/playbooks/pdf_printer_build_pkgr.yml -i $(HOME_DIR)/pdf-printer-build/builder-setup/ansible/inventory/builder -v -e "build_version=${VERSION} no_proxy=${no_proxy} http_proxy=${http_proxy} https_proxy=${https_proxy}" -c local
+	ansible-playbook $(HOME_DIR)/pdf-printer-build/builder-setup/ansible/playbooks/pdf_printer_build_pkgr.yml -i $(HOME_DIR)/pdf-printer-build/builder-setup/ansible/inventory/builder -v -e "build_version=${LOWER_VERSION} no_proxy=${no_proxy} http_proxy=${http_proxy} https_proxy=${https_proxy}" -c local
 
 .PHONY: rpm
 rpm:
@@ -32,7 +33,7 @@ rpm:
     --rpm-os linux  \
 		-t rpm \
 		-n tetration_os_cspm_k9 \
-		-v $(VERSION) \
+		-v $(LOWER_VERSION) \
 		--iteration $(ITER) \
 		-x *.rpm \
 		-x Dockerfile \
@@ -41,23 +42,23 @@ rpm:
 		--vendor Tetration \
     --maintainer 'Cisco Tetration Analytics' \
 		--description "$(DESCRIPTION)" \
-		pdf-printer-$(VERSION)-$(TAG).tar.gz=/local/binaries/adhoc/pdf-printer-$(VERSION)-$(TAG).tar.gz
+		pdf-printer-$(LOWER_VERSION)-$(TAG).tar.gz=/local/binaries/adhoc/pdf-printer-$(LOWER_VERSION)-$(TAG).tar.gz
 
 	pwd && ls
 
 .PHONY: deliver
 deliver:
-	jfrog rt upload tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm acceptance-local/pdf_printer/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
+	jfrog rt upload tetration_os_cspm_k9-$(LOWER_VERSION)-1.noarch.rpm acceptance-local/pdf_printer/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
 	jfrog rt build-publish ${JOB_NAME} ${BUILD_NUMBER}
 
 .PHONY: sign-rpm
 sign-rpm:
-	sudo chown $(USER):$(USER) tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm
-	$(HOME)/bin/rpm-sign.exp tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm
+	sudo chown $(USER):$(USER) tetration_os_cspm_k9-$(LOWER_VERSION)-1.noarch.rpm
+	$(HOME)/bin/rpm-sign.exp tetration_os_cspm_k9-$(LOWER_VERSION)-1.noarch.rpm
 
 .PHONY: promote
 promote:
-	jfrog rt cp "acceptance-local/pdf_printer/tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm" union-local/
+	jfrog rt cp "acceptance-local/pdf_printer/tetration_os_cspm_k9-$(LOWER_VERSION)-1.noarch.rpm" union-local/
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-25s\033[0m %s\n", $$1, $$2}'
