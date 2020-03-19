@@ -33,7 +33,7 @@ rpm:
     --rpm-os linux  \
 		-t rpm \
 		-n tetration_os_cspm_k9 \
-		-v $(LOWER_VERSION) \
+		-v ${LOWER_VERSION} \
 		--iteration $(ITER) \
 		-x *.rpm \
 		-x Dockerfile \
@@ -42,23 +42,23 @@ rpm:
 		--vendor Tetration \
     --maintainer 'Cisco Tetration Analytics' \
 		--description "$(DESCRIPTION)" \
-		pdf-printer-$(LOWER_VERSION)-$(TAG).tar.gz=/local/binaries/adhoc/pdf-printer-$(LOWER_VERSION)-$(TAG).tar.gz
+		pdf-printer-${LOWER_VERSION}-$(TAG).tar.gz=/local/binaries/adhoc/pdf-printer-${LOWER_VERSION}-$(TAG).tar.gz
 
 	pwd && ls
 
 .PHONY: deliver
 deliver:
-	jfrog rt upload tetration_os_cspm_k9-$(LOWER_VERSION)-1.noarch.rpm acceptance-local/pdf_printer/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
+	jfrog rt upload tetration_os_cspm_k9-${LOWER_VERSION}-1.noarch.rpm acceptance-local/pdf_printer/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
 	jfrog rt build-publish ${JOB_NAME} ${BUILD_NUMBER}
 
 .PHONY: sign-rpm
 sign-rpm:
-	sudo chown $(USER):$(USER) tetration_os_cspm_k9-$(LOWER_VERSION)-1.noarch.rpm
-	$(HOME)/bin/rpm-sign.exp tetration_os_cspm_k9-$(LOWER_VERSION)-1.noarch.rpm
+	sudo chown $(USER):$(USER) tetration_os_cspm_k9-${LOWER_VERSION}-1.noarch.rpm
+	$(HOME)/bin/rpm-sign.exp tetration_os_cspm_k9-${LOWER_VERSION}-1.noarch.rpm
 
 .PHONY: promote
 promote:
-	jfrog rt cp "acceptance-local/pdf_printer/tetration_os_cspm_k9-$(LOWER_VERSION)-1.noarch.rpm" union-local/
+	jfrog rt cp "acceptance-local/pdf_printer/tetration_os_cspm_k9-${LOWER_VERSION}-1.noarch.rpm" union-local/
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-25s\033[0m %s\n", $$1, $$2}'
