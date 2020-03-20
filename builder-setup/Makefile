@@ -47,7 +47,7 @@ rpm:
 
 .PHONY: deliver
 deliver:
-	jfrog rt upload tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm acceptance-local/pdf_printer/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
+	jfrog rt upload tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm acceptance-local/$(VERSION)/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
 	jfrog rt build-publish ${JOB_NAME} ${BUILD_NUMBER}
 
 .PHONY: sign-rpm
