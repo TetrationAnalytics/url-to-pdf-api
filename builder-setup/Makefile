@@ -4,7 +4,7 @@ DOCKER_PASSWORD := $$(cat ~/.jfrog/jfrog-cli.conf | jq -r '.artifactory | .[] | 
 PDF_PRINTER_IMAGE ?= $(DOCKER_REPOSITORY)/pdf-printer
 ITER ?= 1
 DESCRIPTION ?= 'Tetration Compliance Report Printer'
-LOWER_VERSION = `echo $(VERSION) | tr A-Z a-z`
+LOWER_VERSION ?= `echo $(VERSION) | tr A-Z a-z`
 
 all: build
 
