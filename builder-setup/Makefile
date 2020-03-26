@@ -29,6 +29,7 @@ build: prepare
 .PHONY: rpm
 rpm:
   cat cspm-version
+	
 	fpm -C docker -s dir \
     --rpm-os linux  \
 		-t rpm \
