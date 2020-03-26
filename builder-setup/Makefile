@@ -43,7 +43,7 @@ rpm:
 		--description "$(DESCRIPTION)" \
 		pdf-printer-$(VERSION)-$(TAG).tar.gz=/local/binaries/adhoc/pdf-printer-$(VERSION)-$(TAG).tar.gz \
     cspm-version=/local/binaries/cspm-version
-	pwd && ls && cat cspm-version
+	pwd && ls && cat docker/cspm-version
 
 .PHONY: deliver
 deliver:
