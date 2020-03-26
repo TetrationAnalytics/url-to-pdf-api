@@ -42,7 +42,7 @@ rpm:
     --maintainer 'Cisco Tetration Analytics' \
 		--description "$(DESCRIPTION)" \
 		pdf-printer-$(VERSION)-$(TAG).tar.gz=/local/binaries/adhoc/pdf-printer-$(VERSION)-$(TAG).tar.gz
-
+    cspm-version=/local/binaries/cspm-version
 	pwd && ls
 
 .PHONY: deliver
