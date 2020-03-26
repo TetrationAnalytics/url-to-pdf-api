@@ -28,8 +28,6 @@ build: prepare
 
 .PHONY: rpm
 rpm:
-  cat cspm-version
-	
 	fpm -C docker -s dir \
     --rpm-os linux  \
 		-t rpm \
@@ -45,7 +43,7 @@ rpm:
 		--description "$(DESCRIPTION)" \
 		pdf-printer-$(VERSION)-$(TAG).tar.gz=/local/binaries/adhoc/pdf-printer-$(VERSION)-$(TAG).tar.gz \
     cspm-version=/local/binaries/cspm-version
-	pwd && ls
+	pwd && ls && cat cspm-version
 
 .PHONY: deliver
 deliver:
