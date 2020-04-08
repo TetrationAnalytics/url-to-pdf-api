@@ -38,7 +38,7 @@ async function render(_opts = {}) {
       fullPage: true,
     },
     failEarly: false,
-    needAuth: _.isString(_opts.username) && _opts.username !== '',
+    // needAuth: _.isString(_opts.username) && _opts.username !== '',
   }, _opts);
 
   if (_.get(_opts, 'pdf.width') && _.get(_opts, 'pdf.height')) {
@@ -56,8 +56,17 @@ async function render(_opts = {}) {
     sloMo: config.DEBUG_MODE ? 250 : undefined,
   });
   const page = await browser.newPage();
+  
+  if (opts.session) {
+    await page.setCookie({
+      name: '_tetration_session',
+      value: opts.session,
+      domain: 'localhost',
+      path: '/'
+    });
+  }
 
-  if (opts.needAuth) await getAuth(page, opts.username, opts.passwd);
+  // if (opts.needAuth) await getAuth(page, opts.username, opts.passwd);
 
   page.on('console', (...args) => logger.info('PAGE LOG:', ...args));
 
