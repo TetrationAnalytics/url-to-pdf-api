@@ -43,8 +43,7 @@ rpm:
 		--description "$(DESCRIPTION)" \
 		pdf-printer-$(VERSION)-$(TAG).tar.gz=/local/binaries/adhoc/pdf-printer-$(VERSION)-$(TAG).tar.gz \
     cspm-version=/local/binaries/cspm-version
-	pwd && ls
-  jfrog rt upload docker/pdf-printer-$(VERSION)-$(TAG).tar.gz acceptance-local/$(VERSION)/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
+	pwd && ls && jfrog rt upload docker/pdf-printer-$(VERSION)-$(TAG).tar.gz acceptance-local/$(VERSION)/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
 
 .PHONY: deliver
 deliver:
