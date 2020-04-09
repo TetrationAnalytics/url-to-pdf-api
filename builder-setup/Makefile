@@ -43,12 +43,13 @@ rpm:
 		--description "$(DESCRIPTION)" \
 		pdf-printer-$(VERSION)-$(TAG).tar.gz=/local/binaries/adhoc/pdf-printer-$(VERSION)-$(TAG).tar.gz \
     cspm-version=/local/binaries/cspm-version
-	pwd && ls && jfrog rt upload docker/pdf-printer-$(VERSION)-$(TAG).tar.gz acceptance-local/$(VERSION)/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
+	pwd && ls
 
 .PHONY: deliver
 deliver:
 	jfrog rt upload tetration_os_cspm_k9-$(VERSION)-1.noarch.rpm acceptance-local/$(VERSION)/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
 	jfrog rt build-publish ${JOB_NAME} ${BUILD_NUMBER}
+	jfrog rt upload docker/pdf-printer-$(VERSION)-$(TAG).tar.gz acceptance-local/$(VERSION)/ --build-name=${JOB_NAME} --build-number=${BUILD_NUMBER} --flat=true --fail-no-op=true --props "commit=$(SHA)"
 
 .PHONY: sign-rpm
 sign-rpm:
